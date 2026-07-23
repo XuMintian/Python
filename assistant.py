@@ -1,14 +1,16 @@
 import json
 
+DATA_FILE="bmi_records_test.json"
+
 def save_records(records):
-    with open ("bmi_records.json", "w", encoding="utf-8") as file:
+    with open (DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(records, file, ensure_ascii=False, indent=4)
 
 def load_records():
     try:
-        with open ("bmi_records.json","r",encoding="utf-8") as file:
+        with open (DATA_FILE,"r",encoding="utf-8") as file:
             return json.load(file)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 def get_number(prompt, minimum, maximum):
@@ -55,6 +57,7 @@ def archive(height, weight, bmi, result):
 
     return person
 
+
 people=load_records()
 
 answer = "y"
@@ -78,6 +81,43 @@ while answer.strip().lower() in ["y", "yes"]:
     answer = input("Do you want to calculate another BMI? (y/n) :")
 
 average=sum(person["bmi"] for person in people)/len(people)
+
+bmi_values = []
+
+for person in people:
+    bmi_values.append(person["bmi"])
+
+highest_bmi = max(bmi_values)
+
+highest_people=[]
+
+for index, person in enumerate(people, start=1):
+    if person["bmi"] == highest_bmi:
+        
+        highest_people.append({
+            "index": index,
+            "person": person
+        })
+
+highest_person_number = len(highest_people)
+
+print(
+    "Highest BMI record:\n"
+    f"There are {highest_person_number} matching records:\n"
+)
+
+for highest_person in highest_people:
+
+    print(
+        "=====================================\n"
+        f"Record No. {highest_person['index']}\n"
+        f"Height: {highest_person['person']['height']}\n"
+        f"Weight: {highest_person['person']['weight']}\n"
+        f"BMI: {round(highest_person['person']['bmi'],2)}\n"
+        f"Category: {highest_person['person']['result']}\n"
+        "=====================================\n"
+    )
+
 
 for index , person in enumerate(people, start=1):
     print(
