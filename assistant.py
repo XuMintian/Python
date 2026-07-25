@@ -62,7 +62,8 @@ def show_menu():
     print("1. Add BMI record")
     print("2. Show all records")
     print("3. Show summary")
-    print("4. Save and quit\n")
+    print("4. Delete records")
+    print("5. Save and quit\n")
 
 # ===========================================================
 # ===========================================================
@@ -162,6 +163,27 @@ while True:
             print(f"\nAverage BMI: {round(average, 2)}")
 
         elif choice == 4:
+            if not people:
+                print("\nNo records yet\n")
+                continue
+            for index, person in enumerate(people, start=1):
+                print(index,
+                      f"\nHeight:{person['height']}, \nWeight:{person['weight']}," 
+                      f"\nBMI:{round(person['bmi'],2)}, \nCategory:{person['result']}"
+                      )
+            while True:
+                try:
+                    delete_choice = int(input("\nWhich one do you want to delete?\n"))
+                    if delete_choice > 0 and delete_choice <= len(people):
+                        people.pop(delete_choice-1)
+                        print("\nDelete successfully\n")
+                        break
+                    else:
+                        print("\nInvalid index, Please enter again\n")
+                except ValueError:
+                    print("\nPlease enter a number\n")
+
+        elif choice == 5:
             save_records(people)
             print("\nRecord saved successfully.\n")
             break
