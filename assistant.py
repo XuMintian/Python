@@ -65,6 +65,114 @@ def show_menu():
     print("4. Delete records")
     print("5. Save and quit\n")
 
+def add_records(people):
+    answer = "y"
+    
+    while answer.strip().lower() in ["y", "yes"]:
+
+        height = get_number("\nEnter your height (cm) :", 50, 250)
+
+        weight = get_number("\nEnter your weight (kg) :", 10, 300)
+
+        bmi = calculate_bmi(height, weight)
+
+        print("\nYour BMI is :", round(bmi,2))
+
+        result = get_bmi_category(bmi)
+
+        print(f"\nYou are {result}\n")
+
+        people.append(archive(height, weight, bmi, result))
+
+        answer = input("\nDo you want to calculate another BMI? (y/n) :")
+
+    print("\nRecord added successfully.\n")
+
+def show_records(people):
+    if not people:
+        print("\nNo records yet\n")
+        return
+    for index, person in enumerate(people, start=1):
+            
+            print(
+                index, 
+                f"\nHeight:{person['height']}, \nWeight:{person['weight']}," 
+                f"\nBMI:{round(person['bmi'],2)}, \nCategory:{person['result']}"
+                )
+
+def show_summary(people):
+    
+    if not people:
+        print("\nNo records yet\n")
+        return
+    bmi_values = []
+
+    for person in people:
+        bmi_values.append(person["bmi"])
+
+    highest_bmi = max(bmi_values)
+
+    highest_people=[]
+
+    for index, person in enumerate(people, start=1):
+        if person["bmi"] == highest_bmi:
+            
+            highest_people.append({
+                "index": index,
+                "person": person
+            })
+
+    highest_person_number = len(highest_people)
+
+    print(
+        "\nHighest BMI record:\n"
+        f"\nThere are {highest_person_number} matching records:\n"
+    )
+
+    for highest_person in highest_people:
+
+        print(
+            "\n=====================================\n"
+            f"\nRecord No. {highest_person['index']}\n"
+            f"\nHeight: {highest_person['person']['height']}\n"
+            f"\nWeight: {highest_person['person']['weight']}\n"
+            f"\nBMI: {round(highest_person['person']['bmi'],2)}\n"
+            f"\nCategory: {highest_person['person']['result']}\n"
+            "\n=====================================\n"
+        )
+
+    print("\nAll records:\n")
+
+    for index , person in enumerate(people, start=1):
+        print(
+            index, 
+            round(person["bmi"], 2)
+            )
+        
+    average=sum(person["bmi"] for person in people)/len(people)
+    print(f"\nAverage BMI: {round(average, 2)}")
+
+def delete_records(people):
+    if not people:
+        print("\nNo records yet\n")
+        return
+    for index, person in enumerate(people, start=1):
+        print(index,
+                f"\nHeight:{person['height']}, \nWeight:{person['weight']}," 
+                f"\nBMI:{round(person['bmi'],2)}, \nCategory:{person['result']}"
+                )
+    while True:
+        try:
+            delete_choice = int(input("\nWhich one do you want to delete?\n"))
+            if delete_choice > 0 and delete_choice <= len(people):
+                people.pop(delete_choice-1)
+                print("\nDelete successfully\n")
+                break
+            else:
+                print("\nInvalid index, Please enter again\n")
+        except ValueError:
+            print("\nPlease enter a number\n")
+
 # ===========================================================
 # ===========================================================
 
@@ -76,112 +184,16 @@ while True:
     try:
         choice = int(input("Choose an option: "))
         if choice == 1:
-
-            answer = "y"
-
-            while answer.strip().lower() in ["y", "yes"]:
-
-                height = get_number("\nEnter your height (cm) :", 50, 250)
-
-                weight = get_number("\nEnter your weight (kg) :", 10, 300)
-
-                bmi = calculate_bmi(height, weight)
-
-                print("\nYour BMI is :", round(bmi,2))
-
-                result = get_bmi_category(bmi)
-
-                print(f"\nYou are {result}\n")
-
-                people.append(archive(height, weight, bmi, result))
-
-                answer = input("\nDo you want to calculate another BMI? (y/n) :")
-
-            print("\nRecord saved successfully.\n")
-
+            add_records(people)
+            
         elif choice == 2:
-            if not people:
-                print("\nNo records yet\n")
-                continue
-            for index, person in enumerate(people, start=1):
-                    
-                    print(
-                        index, 
-                        f"\nHeight:{person['height']}, \nWeight:{person['weight']}," 
-                        f"\nBMI:{round(person['bmi'],2)}, \nCategory:{person['result']}"
-                        )
+            show_records(people)
 
         elif choice == 3:
-            if not people:
-                print("\nNo records yet\n")
-                continue
-            bmi_values = []
-
-            for person in people:
-                bmi_values.append(person["bmi"])
-
-            highest_bmi = max(bmi_values)
-
-            highest_people=[]
-
-            for index, person in enumerate(people, start=1):
-                if person["bmi"] == highest_bmi:
-                    
-                    highest_people.append({
-                        "index": index,
-                        "person": person
-                    })
-
-            highest_person_number = len(highest_people)
-
-            print(
-                "\nHighest BMI record:\n"
-                f"\nThere are {highest_person_number} matching records:\n"
-            )
-
-            for highest_person in highest_people:
-
-                print(
-                    "\n=====================================\n"
-                    f"\nRecord No. {highest_person['index']}\n"
-                    f"\nHeight: {highest_person['person']['height']}\n"
-                    f"\nWeight: {highest_person['person']['weight']}\n"
-                    f"\nBMI: {round(highest_person['person']['bmi'],2)}\n"
-                    f"\nCategory: {highest_person['person']['result']}\n"
-                    "\n=====================================\n"
-                )
-
-            print("\nAll records:\n")
-
-            for index , person in enumerate(people, start=1):
-                print(
-                    index, 
-                    round(person["bmi"], 2)
-                    )
-                
-            average=sum(person["bmi"] for person in people)/len(people)
-            print(f"\nAverage BMI: {round(average, 2)}")
+            show_summary(people)
 
         elif choice == 4:
-            if not people:
-                print("\nNo records yet\n")
-                continue
-            for index, person in enumerate(people, start=1):
-                print(index,
-                      f"\nHeight:{person['height']}, \nWeight:{person['weight']}," 
-                      f"\nBMI:{round(person['bmi'],2)}, \nCategory:{person['result']}"
-                      )
-            while True:
-                try:
-                    delete_choice = int(input("\nWhich one do you want to delete?\n"))
-                    if delete_choice > 0 and delete_choice <= len(people):
-                        people.pop(delete_choice-1)
-                        print("\nDelete successfully\n")
-                        break
-                    else:
-                        print("\nInvalid index, Please enter again\n")
-                except ValueError:
-                    print("\nPlease enter a number\n")
+            delete_records(people)
 
         elif choice == 5:
             save_records(people)
